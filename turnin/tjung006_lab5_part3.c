@@ -36,8 +36,9 @@ unsigned char subtract(unsigned char a, unsigned char b){
 }
 unsigned char tmpC = 0x00;
 unsigned char tmpA = 0x00;
-unsigned char one = 0x01;
-enum states{start, r, a0p, a1p, doublep}state;
+unsigned short one = 1;
+unsigned short i = 3;
+enum states{start, r, odd, even}state;
 void tick(){
 	switch(state){
 		case start:
@@ -46,53 +47,35 @@ void tick(){
 			break;
 		case r:
 			if(tmpA == 0x01){
-				state = a0p;
-				if(tmpC < 15){
-					tmpC += one;
+				if(i % 2 == 1){
+					state = odd;
+					tmpC = 0x15;
+					i++;
+				}
+				else{
+					state = even;
+					tmpC = 0x2A;
+					i++;
 				}
 			}
-			else if(tmpA == 0x02){
-				state = a1p;
-				if(tmpC >0){
-					tmpC -= one;
-				}
-			} 
-			else if(tmpA == 0x03){
-				state = doublep;
-			}	
 			else{
 				state = r;
 			}
 			break;
-		case a0p:
+		case odd:
 			if(tmpA == 0x00){
 				state = r;
 			}
-			else if(tmpA == 0x03){
-				state = doublep;
-			}
 			else{
-				state = a0p;
+				state = odd;
 			}
 			break;
-		case a1p:
-			if(tmpA == 0x03){
-				state = doublep;
-			}
-			else if(tmpA == 0x00){
-				state = r;
-			}
-			else{
-				state = a1p;
-			}
-			break;
-		case doublep:
+		case even:
 			if(tmpA == 0x00){
 				state = r;
-				tmpC = 0x00;
 			}
 			else{
-				state = doublep;
+				state = even;
 			}
 			break;
 		default:
@@ -107,7 +90,7 @@ int main(void) {
     /* Insert your solution below */
     state = start;
     while (1) {
-	tmpA = ~PINA & 0x03;
+	tmpA = ~PINA & 0x01;
 	tick();
     }
     return 0;

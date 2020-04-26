@@ -26,11 +26,12 @@
 echo ======================================================\n
 echo Running all tests..."\n\n
 
-test "PORTA = 0x07"
-setPINA 0x07
-continue 5
-expectPORTC 0x3C
+test "initial"
+setPINA 0x00
+continue 2
+expectPORTC 0x00
 checkResult
+
 # Report on how many tests passed/tests ran
 set $passed=$tests-$failed
 eval "shell echo Passed %d/%d tests.\n",$passed,$tests
